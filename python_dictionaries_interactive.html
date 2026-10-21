@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="ru">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Словари Python с нуля — интерактивная домашка</title>
+    <style>
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            font: 16px/1.65 -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif
+        }
+
+        main {
+            max-width: 850px;
+            margin: auto;
+            padding: 36px 20px 90px
+        }
+
+        header {
+            padding: 34px 0
+        }
+
+        h1 {
+            font-size: clamp(34px, 5vw, 52px);
+            line-height: 1.12;
+            margin: 12px 0
+        }
+
+        h2 {
+            font-size: 27px;
+            line-height: 1.25;
+            margin: 0 0 15px
+        }
+
+        h3 {
+            font-size: 19px;
+            margin: 0 0 12px
+        }
+
+        p {
+            margin: 10px 0 14px
+        }
+
+        .muted {
+            color: #73737b
+        }
+
+        .eyebrow {
+            font-size: 12px;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+            font-weight: 750;
+            color: #b42318
+        }
+
+        .panel {
+            background: white;
+            border: 1px solid #e5e5e8;
+            border-radius: 18px;
+            padding: 26px;
+            margin: 18px 0;
+            box-shadow: 0 5px 20px #11111105
+        }
+
+        .lesson {
+            margin-top: 30px
+        }
+
+        .meta {
+            font-size: 13px;
+            color: #777;
+            margin-bottom: 10px
+        }
+
+        .exercise {
+            border-top: 1px solid #eaeaea;
+            padding: 23px 0 4px
+        }
+
+        .exercise:first-of-type {
+            border-top: 0
+        }
+
+        .tag {
+            display: inline-block;
+            font-size: 11px;
+            letter-spacing: .5px;
+            color: #b42318;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 9px
+        }
+
+        pre {
+            background: #202125;
+            color: #f3f3f3;
+            border-radius: 12px;
+            padding: 18px;
+            overflow: auto;
+            font: 14px/1.65 Consolas, Monaco, monospace;
+            white-space: pre
+        }
+
+        code {
+            font: 0.91em Consolas, Monaco, monospace
+        }
+
+        pre code {
+            font: inherit
+        }
+
+        button {
+            cursor: pointer;
+            background: #1d1d1f;
+            color: white;
+            border: 1px solid #1d1d1f;
+            border-radius: 10px;
+            padding: 10px 15px;
+            font: inherit;
+            font-size: 14px;
+            font-weight: 650
+        }
+
+        button:hover {
+            opacity: .86
+        }
+
+        .secondary {
+            background: white;
+            color: #1d1d1f;
+            border-color: #d8d8dc
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 13px 0
+        }
+
+        .reveal {
+            background: #f5f5f7;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 10px 0
+        }
+
+        .reveal pre {
+            margin: 8px 0
+        }
+
+        .choices {
+            display: grid;
+            gap: 8px;
+            margin: 12px 0
+        }
+
+        .choice {
+            display: block;
+            text-align: left;
+            background: #f6f6f8;
+            color: #1d1d1f;
+            border: 1px solid #e6e6e8
+        }
+
+        .choice.selected {
+            border-color: #555;
+            background: #e9e9ec
+        }
+
+        .feedback {
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            background: #f5f5f7
+        }
+
+        .feedback.good {
+            background: #e8f5ec;
+            color: #166534
+        }
+
+        .feedback.bad {
+            background: #fff0ef;
+            color: #9f2722
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 20px;
+            background: #e2e2e5;
+            overflow: hidden
+        }
+
+        .progress>div {
+            background: #b42318;
+            height: 100%;
+            width: 0;
+            transition: width .2s
+        }
+
+        .topline {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: center
+        }
+
+        .note {
+            font-size: 14px;
+            color: #666
+        }
+
+        .taskdone {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 14px
+        }
+
+        .taskdone input {
+            width: 18px;
+            height: 18px;
+            accent-color: #b42318
+        }
+
+        .footer {
+            margin-top: 50px;
+            color: #777;
+            font-size: 13px
+        }
+
+        .small {
+            font-size: 13px
+        }
+
+        @media(max-width:550px) {
+            main {
+                padding: 20px 14px 60px
+            }
+
+            .panel {
+                padding: 19px
+            }
+
+            pre {
+                font-size: 12px;
+                padding: 13px
+            }
+
+            h2 {
+                font-size: 24px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <header>
+            <div class="eyebrow">Python · Самостоятельная работа</div>
+            <h1>Словари с нуля</h1>
+            <p class="muted">6 небольших уроков · 75–90 минут · теория, практика, подсказки и решения</p>
+            <div class="panel"><b>Как заниматься</b>
+                <p>Читай теорию по порядку. После каждого объяснения отвечай на вопрос и <b>пиши программу в своём
+                        Python</b> (IDLE, VS Code или онлайн-среде). Сначала запускай и проверяй свой код, потом
+                    открывай подсказки и образец решения. Сравнивай алгоритм, а не только текст программы.</p>
+                <p class="note">Встроенного запуска Python здесь нет. Ответы на вопросы проверяются прямо на странице, а
+                    решения программ сравниваются с образцами. Прогресс сохраняется только в этом браузере.</p>
+                <div class="topline"><b>Твой прогресс</b><span id="count" class="small"></span></div>
+                <div class="progress">
+                    <div id="bar"></div>
+                </div>
+            </div>
+        </header>
+        <section class="panel lesson" id="lesson-01">
+            <div class="eyebrow">Раздел 01 · 10 минут</div>
+            <h2>Что такое словарь</h2>
+            <p>Список хранит элементы по номерам (индексам). Словарь хранит пары <b>ключ → значение</b>. Например, имя
+                ученика — ключ, балл — значение.</p>
+            <pre><code>scores = {'Anna': 80, 'Max': 75}
+print(scores['Anna'])  # 80</code></pre>
+            <p>Ключи уникальны: два одинаковых ключа не могут существовать одновременно. Значения могут совпадать.
+                Пустой словарь создаётся как <code>d = {}</code>. Числа и строки могут быть ключами.</p>
+            <div class="exercise" data-quiz="0" data-correct="1"
+                data-explain="Ключ позволяет получить связанное с ним значение.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Что верно о словаре?</h3>
+                <div class="choices"><button class="choice" type="button">Данные доступны только по числовому
+                        индексу</button><button class="choice" type="button">Словарь хранит пары ключ —
+                        значение</button><button class="choice" type="button">Все значения обязаны быть
+                        уникальны</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise" data-quiz="1" data-correct="1"
+                data-explain="Квадратные скобки обращаются к значению по ключу.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Что напечатает print({&#x27;x&#x27;: 4}[&#x27;x&#x27;])?</h3>
+                <div class="choices"><button class="choice" type="button">x</button><button class="choice"
+                        type="button">4</button><button class="choice" type="button">Ошибка</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Первое обращение</h3>
+                <p>Создай словарь с ключами <code>cat</code> и <code>dog</code>, значениями 4 и 7. Выведи значение по
+                    ключу <code>dog</code>.</p>
+                <div class="actions"><button class="secondary" data-toggle="t0h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t0h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t0sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t0h1" hidden>Ключ указывается в квадратных скобках.</div>
+                <div class="reveal" id="t0h2" hidden>Создай d = {"cat": 4, "dog": 7}; затем print(d["dog"]).</div>
+                <div class="reveal" id="t0sol" hidden><b>Образец решения</b>
+                    <pre><code>d = {&quot;cat&quot;: 4, &quot;dog&quot;: 7}
+print(d[&quot;dog&quot;])  # 7</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t0">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+        </section>
+        <section class="panel lesson" id="lesson-02">
+            <div class="eyebrow">Раздел 02 · 10 минут</div>
+            <h2>Добавляем и изменяем</h2>
+            <p>Присваивание по новому ключу создаёт пару, по существующему — меняет значение. Обращение к отсутствующему
+                ключу через квадратные скобки вызывает <code>KeyError</code>.</p>
+            <pre><code>d = {}
+d['cat'] = 3
+d['dog'] = 5
+d['cat'] = 7
+print(d)  # {'cat': 7, 'dog': 5}</code></pre>
+            <p>Проверить существование ключа можно выражением <code>'cat' in d</code>, а отсутствие —
+                <code>'bird' not in d</code>.
+            </p>
+            <div class="exercise" data-quiz="2" data-correct="1"
+                data-explain="Повторное присваивание заменяет значение существующего ключа.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Что будет после d = {&#x27;a&#x27;: 2}; d[&#x27;a&#x27;] = 9?</h3>
+                <div class="choices"><button class="choice" type="button">{&#x27;a&#x27;: 2, &#x27;a&#x27;:
+                        9}</button><button class="choice" type="button">{&#x27;a&#x27;: 9}</button><button
+                        class="choice" type="button">Ошибка</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise" data-quiz="3" data-correct="0"
+                data-explain="Оператор in для словаря проверяет именно ключи.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Что означает &#x27;z&#x27; not in d?</h3>
+                <div class="choices"><button class="choice" type="button">Ключ z отсутствует</button><button
+                        class="choice" type="button">Значение z отсутствует</button><button class="choice"
+                        type="button">Словарь пуст</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Меняем цены</h3>
+                <p>Создай пустой словарь. Добавь <code>apple: 100</code>, <code>banana: 60</code>,
+                    <code>milk: 120</code>. Измени цену banana на 75. Выведи весь словарь.
+                </p>
+                <div class="actions"><button class="secondary" data-toggle="t1h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t1h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t1sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t1h1" hidden>Используй d["apple"] = 100.</div>
+                <div class="reveal" id="t1h2" hidden>Повторное присваивание d["banana"] = 75 изменит значение.</div>
+                <div class="reveal" id="t1sol" hidden><b>Образец решения</b>
+                    <pre><code>prices = {}
+prices[&quot;apple&quot;] = 100
+prices[&quot;banana&quot;] = 60
+prices[&quot;milk&quot;] = 120
+prices[&quot;banana&quot;] = 75
+print(prices)
+# {&quot;apple&quot;: 100, &quot;banana&quot;: 75, &quot;milk&quot;: 120}</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t1">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+        </section>
+        <section class="panel lesson" id="lesson-03">
+            <div class="eyebrow">Раздел 03 · 15 минут</div>
+            <h2>Ключи, значения и перебор</h2>
+            <p>По умолчанию цикл <code>for</code> по словарю перебирает <b>ключи</b>. По ключу можно получить значение:
+                <code>d[key]</code>.
+            </p>
+            <pre><code>d = {'a': 10, 'b': 20}
+for key in d:
+    print(key, d[key])
+
+print(list(d.keys()))    # ['a', 'b']
+print(list(d.values()))  # [10, 20]
+print(list(d.items()))   # [('a', 10), ('b', 20)]</code></pre>
+            <p>Функции <code>min(d)</code> и <code>max(d)</code> ищут минимальный и максимальный <b>ключ</b>, а не
+                значение. Для задачи с числовыми ключами можно использовать их сумму.</p>
+            <div class="exercise" data-quiz="4" data-correct="1" data-explain="Минимальный ключ 3, максимальный 12.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Для d = {7: 100, 3: 200, 12: 5} чему равно min(d) + max(d)?</h3>
+                <div class="choices"><button class="choice" type="button">105</button><button class="choice"
+                        type="button">15</button><button class="choice" type="button">205</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Перебор оценок</h3>
+                <p>Дан словарь <code>{"Ann": 5, "Bob": 4, "Eva": 5}</code>. Выведи имена всех учеников, у которых оценка
+                    равна 5.</p>
+                <div class="actions"><button class="secondary" data-toggle="t2h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t2h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t2sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t2h1" hidden>В цикле for name in d перебираются ключи.</div>
+                <div class="reveal" id="t2h2" hidden>Проверяй if d[name] == 5.</div>
+                <div class="reveal" id="t2sol" hidden><b>Образец решения</b>
+                    <pre><code>d = {&quot;Ann&quot;: 5, &quot;Bob&quot;: 4, &quot;Eva&quot;: 5}
+for name in d:
+    if d[name] == 5:
+        print(name)
+# Ann
+# Eva</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t2">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Минимальный и максимальный ключ</h3>
+                <p>Дан словарь <code>{5: 100, 2: 300, 9: 10}</code>. Выведи сумму минимального и максимального ключей.
+                </p>
+                <div class="actions"><button class="secondary" data-toggle="t3h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t3h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t3sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t3h1" hidden>min(d) и max(d) работают по ключам.</div>
+                <div class="reveal" id="t3h2" hidden>Минимальный ключ 2, максимальный 9.</div>
+                <div class="reveal" id="t3sol" hidden><b>Образец решения</b>
+                    <pre><code>d = {5: 100, 2: 300, 9: 10}
+print(min(d) + max(d))  # 11</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t3">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+        </section>
+        <section class="panel lesson" id="lesson-04">
+            <div class="eyebrow">Раздел 04 · 20 минут</div>
+            <h2>Словарь-счётчик</h2>
+            <p>Один из самых полезных приёмов: ключ — элемент, значение — сколько раз он встретился. Перебираем строку
+                по символам. Если ключа нет, создаём счётчик 0, затем увеличиваем на единицу.</p>
+            <pre><code>s = 'banana'
+d = {}
+for c in s:
+    if c not in d:
+        d[c] = 0
+    d[c] += 1
+print(d)  # {'b': 1, 'a': 3, 'n': 2}</code></pre>
+            <p><b>Почему нужна проверка?</b> Выражение <code>d[c] += 1</code> читает прежнее значение. Если ключа ещё
+                нет, возникнет ошибка. Сначала создаём его со значением 0.</p>
+            <div class="exercise" data-quiz="5" data-correct="1"
+                data-explain="Нельзя увеличить значение ключа, которого ещё нет.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Почему перед d[c] += 1 иногда пишут d[c] = 0?</h3>
+                <div class="choices"><button class="choice" type="button">Чтобы отсортировать словарь</button><button
+                        class="choice" type="button">Чтобы создать отсутствующий ключ</button><button class="choice"
+                        type="button">Чтобы удалить символ</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Подсчёт букв</h3>
+                <p>Считай строку и создай словарь частот всех её букв. Проверь на строке <code>abracadabra</code>.</p>
+                <div class="actions"><button class="secondary" data-toggle="t4h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t4h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t4sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t4h1" hidden>Создай пустой словарь и перебирай строку в for.</div>
+                <div class="reveal" id="t4h2" hidden>Если буквы нет, создай d[c] = 0, потом увеличь счётчик.</div>
+                <div class="reveal" id="t4sol" hidden><b>Образец решения</b>
+                    <pre><code>s = input()
+d = {}
+for c in s:
+    if c not in d:
+        d[c] = 0
+    d[c] += 1
+print(d)
+# Для abracadabra:
+# {&quot;a&quot;: 5, &quot;b&quot;: 2, &quot;r&quot;: 2, &quot;c&quot;: 1, &quot;d&quot;: 1}</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t4">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+        </section>
+        <section class="panel lesson" id="lesson-05">
+            <div class="eyebrow">Раздел 05 · 10 минут</div>
+            <h2>Сортировка по ключам</h2>
+            <p>Метод <code>items()</code> возвращает пары (ключ, значение). <code>sorted(...)</code> сортирует пары по
+                первому элементу — ключу, а <code>dict(...)</code> собирает их обратно в словарь.</p>
+            <pre><code>d = {'n': 2, 'b': 1, 'a': 3}
+d = dict(sorted(d.items()))
+print(d)  # {'a': 3, 'b': 1, 'n': 2}</code></pre>
+            <p>Для строчных латинских букв такой порядок будет алфавитным. В современном Python словарь сохраняет
+                порядок вставки элементов.</p>
+            <div class="exercise" data-quiz="6" data-correct="0"
+                data-explain="Пары сортируются по первому элементу — ключу.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Что сортирует sorted(d.items()) для словаря с буквенными ключами?</h3>
+                <div class="choices"><button class="choice" type="button">Пары по ключу</button><button class="choice"
+                        type="button">Только значения</button><button class="choice" type="button">Строку
+                        целиком</button></div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Буквы по алфавиту</h3>
+                <p>Дополни предыдущую программу так, чтобы словарь частот выводился с ключами по алфавиту. Проверь на
+                    <code>banana</code>.
+                </p>
+                <div class="actions"><button class="secondary" data-toggle="t5h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t5h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t5sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t5h1" hidden>Понадобятся items(), sorted() и dict().</div>
+                <div class="reveal" id="t5h2" hidden>После подсчёта напиши d = dict(sorted(d.items())).</div>
+                <div class="reveal" id="t5sol" hidden><b>Образец решения</b>
+                    <pre><code>s = input()
+d = {}
+for c in s:
+    if c not in d:
+        d[c] = 0
+    d[c] += 1
+d = dict(sorted(d.items()))
+print(d)
+# banana -&gt; {&quot;a&quot;: 3, &quot;b&quot;: 1, &quot;n&quot;: 2}</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t5">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+        </section>
+        <section class="panel lesson" id="lesson-06">
+            <div class="eyebrow">Раздел 06 · 20 минут</div>
+            <h2>Повторяющиеся идентификаторы</h2>
+            <p>Теперь словарь будет хранить число <b>предыдущих повторений</b> исходного имени. Список <code>ans</code>
+                сохранит результат в правильном порядке.</p>
+            <pre><code>s = input().split()  # слова через пробел
+ans = []
+d = {}
+for x in s:
+    if x not in d:
+        d[x] = 0
+        ans.append(x)
+    else:
+        d[x] += 1
+        ans.append(x + '_' + str(d[x]))
+print(*ans)</code></pre>
+            <p><code>split()</code> делит строку на слова; <code>append()</code> добавляет элемент в список;
+                <code>str()</code> превращает число в строку; <code>print(*ans)</code> печатает элементы списка через
+                пробел. Первое появление остаётся без суффикса, второе получает <code>_1</code>, третье —
+                <code>_2</code>.
+            </p>
+            <p class="note">В этой учебной задаче считаем, что исходные имена не конфликтуют с именами, полученными
+                после добавления суффиксов.</p>
+            <div class="exercise" data-quiz="7" data-correct="1"
+                data-explain="Первое появление без суффикса, затем _1, _2.">
+                <div class="tag">Проверь понимание</div>
+                <h3>Для ввода a b a a что должно получиться?</h3>
+                <div class="choices"><button class="choice" type="button">a b a_2 a_3</button><button class="choice"
+                        type="button">a b a_1 a_2</button><button class="choice" type="button">a_1 b_1 a_2 a_3</button>
+                </div>
+                <div class="feedback" hidden aria-live="polite"></div>
+            </div>
+            <div class="exercise">
+                <div class="tag">Напиши код самостоятельно</div>
+                <h3>Уникальные имена</h3>
+                <p>Считай слова через пробел и добавляй к повторениям суффиксы <code>_1</code>, <code>_2</code> и т. д.
+                    Проверь на <code>cat dog cat dog cat</code>.</p>
+                <div class="actions"><button class="secondary" data-toggle="t6h1" aria-expanded="false">Подсказка
+                        1</button><button class="secondary" data-toggle="t6h2" aria-expanded="false">Подсказка
+                        2</button><button data-toggle="t6sol" aria-expanded="false">Показать решение</button></div>
+                <div class="reveal" id="t6h1" hidden>Нужны словарь-счётчик и список ответа.</div>
+                <div class="reveal" id="t6h2" hidden>Для нового слова d[x] = 0 и ans.append(x); для повторения
+                    увеличивай счётчик.</div>
+                <div class="reveal" id="t6sol" hidden><b>Образец решения</b>
+                    <pre><code>s = input().split()
+d = {}
+ans = []
+for x in s:
+    if x not in d:
+        d[x] = 0
+        ans.append(x)
+    else:
+        d[x] += 1
+        ans.append(x + &quot;_&quot; + str(d[x]))
+print(*ans)
+# cat dog cat_1 dog_1 cat_2</code></pre>
+                    <p class="note">Проверь свою программу на примере и ещё на одном собственном тесте.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="t6">Я написал(а) и проверил(а) свой
+                    код</label>
+            </div>
+        </section>
+        <section class="panel lesson">
+            <div class="eyebrow">Итоговая практика · 3 задачи</div>
+            <h2>Теперь попробуй без подсказок</h2>
+            <p>Это три задачи из урока. Напиши каждую программу с нуля. Подсказки и решения открывай только после
+                попытки.</p>
+            <div class="exercise">
+                <div class="tag">Итоговая задача 1</div>
+                <h3>№ 10364808 · Сумма ключей</h3>
+                <p>На вход подаётся непустой словарь с целочисленными ключами. Выведи сумму минимального и максимального
+                    ключей.</p><b>Пример ввода</b>
+                <pre><code>{5: 100, 2: 300, 9: 10}</code></pre><b>Ожидаемый вывод</b>
+                <pre><code>11</code></pre>
+                <div class="actions"><button class="secondary" data-toggle="f0h1">Подсказка 1</button><button
+                        class="secondary" data-toggle="f0h2">Подсказка 2</button><button data-toggle="f0sol">Показать
+                        решение</button></div>
+                <div class="reveal" id="f0h1" hidden>Можно воспользоваться <code>ast.literal_eval(input())</code>, чтобы
+                    считать словарь как Python-объект.</div>
+                <div class="reveal" id="f0h2" hidden>Найди min(d) и max(d).</div>
+                <div class="reveal" id="f0sol" hidden><b>Образец решения</b>
+                    <pre><code>import ast
+d = ast.literal_eval(input())
+print(min(d) + max(d))</code></pre>
+                    <p class="note">Другой корректный код тоже подходит. Проверь хотя бы два собственных примера.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="f0">Решено и проверено</label>
+            </div>
+            <div class="exercise">
+                <div class="tag">Итоговая задача 2</div>
+                <h3>№ 10364814 · Частоты букв</h3>
+                <p>На вход подаётся строка из строчных латинских букв. Выведи словарь частот, отсортированный по ключам.
+                </p><b>Пример ввода</b>
+                <pre><code>banana</code></pre><b>Ожидаемый вывод</b>
+                <pre><code>{&#x27;a&#x27;: 3, &#x27;b&#x27;: 1, &#x27;n&#x27;: 2}</code></pre>
+                <div class="actions"><button class="secondary" data-toggle="f1h1">Подсказка 1</button><button
+                        class="secondary" data-toggle="f1h2">Подсказка 2</button><button data-toggle="f1sol">Показать
+                        решение</button></div>
+                <div class="reveal" id="f1h1" hidden>Перебирай символы и считай их в словаре.</div>
+                <div class="reveal" id="f1h2" hidden>После подсчёта отсортируй пары d.items().</div>
+                <div class="reveal" id="f1sol" hidden><b>Образец решения</b>
+                    <pre><code>s = input()
+d = {}
+for c in s:
+    if c not in d:
+        d[c] = 0
+    d[c] += 1
+d = dict(sorted(d.items()))
+print(d)</code></pre>
+                    <p class="note">Другой корректный код тоже подходит. Проверь хотя бы два собственных примера.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="f1">Решено и проверено</label>
+            </div>
+            <div class="exercise">
+                <div class="tag">Итоговая задача 3</div>
+                <h3>№ 10364815 · Идентификаторы</h3>
+                <p>На вход подаются идентификаторы через пробел. Первое появление оставь без изменений; повторным
+                    добавляй _1, _2 и т. д. Сохрани порядок.</p><b>Пример ввода</b>
+                <pre><code>cat dog cat bird dog cat</code></pre><b>Ожидаемый вывод</b>
+                <pre><code>cat dog cat_1 bird dog_1 cat_2</code></pre>
+                <div class="actions"><button class="secondary" data-toggle="f2h1">Подсказка 1</button><button
+                        class="secondary" data-toggle="f2h2">Подсказка 2</button><button data-toggle="f2sol">Показать
+                        решение</button></div>
+                <div class="reveal" id="f2h1" hidden>Используй d для счётчиков и ans для ответа.</div>
+                <div class="reveal" id="f2h2" hidden>Для первого появления счётчик 0; для повторения увеличивай его и
+                    добавляй суффикс.</div>
+                <div class="reveal" id="f2sol" hidden><b>Образец решения</b>
+                    <pre><code>s = input().split()
+d = {}
+ans = []
+for x in s:
+    if x not in d:
+        d[x] = 0
+        ans.append(x)
+    else:
+        d[x] += 1
+        ans.append(x + &quot;_&quot; + str(d[x]))
+print(*ans)</code></pre>
+                    <p class="note">Другой корректный код тоже подходит. Проверь хотя бы два собственных примера.</p>
+                </div><label class="taskdone"><input type="checkbox" data-check="f2">Решено и проверено</label>
+            </div>
+        </section>
+        <section class="panel">
+            <h2>После домашки</h2>
+            <p>Ты умеешь создавать словари, обращаться к значениям по ключу, добавлять и изменять пары, проверять ключи
+                через <code>in</code>, перебирать словарь, считать частоты символов и сортировать пары по ключу.</p>
+            <p><b>Если застряла:</b> напиши мне в тг :)</p>
+        </section>
+    </main>
+    <script>const key = 'dict-course-v1'; let state = { quiz: {}, done: {} }; try { state = { ...state, ...JSON.parse(localStorage.getItem(key) || '{}') } } catch (e) { } function save() { localStorage.setItem(key, JSON.stringify(state)); progress() } function progress() { const total = document.querySelectorAll('[data-check]').length; const done = document.querySelectorAll('[data-check]:checked').length; document.querySelector('#count').textContent = `${done} из ${total} практических заданий отмечено`; document.querySelector('#bar').style.width = (total ? 100 * done / total : 0) + '%' } document.querySelectorAll('[data-check]').forEach(el => { el.checked = !!state.done[el.dataset.check]; el.addEventListener('change', () => { state.done[el.dataset.check] = el.checked; save() }) }); document.querySelectorAll('[data-quiz]').forEach(box => { const id = box.dataset.quiz; const correct = Number(box.dataset.correct); const buttons = [...box.querySelectorAll('.choice')]; const feedback = box.querySelector('.feedback'); function pick(i) { state.quiz[id] = i; buttons.forEach((b, j) => { b.classList.toggle('selected', i === j); b.setAttribute('aria-pressed', String(i === j)) }); feedback.hidden = false; feedback.className = 'feedback ' + (i === correct ? 'good' : 'bad'); feedback.textContent = (i === correct ? 'Верно! ' : 'Пока неверно. ') + box.dataset.explain; save() } buttons.forEach((b, i) => b.addEventListener('click', () => pick(i))); if (state.quiz[id] !== undefined) pick(state.quiz[id]) }); document.querySelectorAll('[data-toggle]').forEach(b => b.addEventListener('click', () => { const el = document.getElementById(b.dataset.toggle); el.hidden = !el.hidden; b.setAttribute('aria-expanded', String(!el.hidden)) })); progress();</script>
+</body>
+
+</html>
